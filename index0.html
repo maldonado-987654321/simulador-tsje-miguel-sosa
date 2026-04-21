@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador TSJE</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  margin:0;
+  text-align:center;
+  background:#eaeaea;
+  color:#222;
+}
+
+.pantalla{
+  display:none;
+  padding:10px 20px 20px;
+  min-height:100vh;
+}
+
+.activa{
+  display:block;
+}
+
+.subinfo{
+  margin:8px 0 14px;
+  font-size:15px;
+  color:#444;
+}
+
+.info-eleccion{
+  display:none;
+}
+
+img.encabezado{
+  width:100%;
+  height:105px;
+  object-fit:contain;
+  margin-bottom:10px;
+  background:#fff;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+}
+
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:0;
+}
+
+.grid-candidatos{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:3px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid #bfbfbf;
+  padding:12px;
+  cursor:pointer;
+  min-height:180px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  transition:0.2s ease;
+}
+
+.card:hover{
+  background:#fafafa;
+}
+
+.seleccionado{
+  border:4px solid green !important;
+  background:#dfffe0 !important;
+}
+
+.bloqueado{
+  opacity:0.35;
+  pointer-events:none;
+}
+
+.botonera{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  margin-top:20px;
+  flex-wrap:wrap;
+}
+
+button{
+  border:none;
+  padding:14px 24px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.btn-volver{
+  background:#607d8b;
+  color:white;
+}
+
+.btn-reiniciar{
+  background:orange;
+  color:white;
+}
+
+.btn-imprimir{
+  background:green;
+  color:white;
+}
+
+.btn-inicio{
+  background:#1565c0;
+  color:white;
+}
+
+.resultado{
+  display:grid;
+  grid-template-columns:1fr 1fr 220px;
+  gap:20px;
+  align-items:start;
+}
+
+.bloque{
+  background:#fff;
+  padding:20px;
+  border:2px solid #ccc;
+  min-height:420px;
+}
+
+.acciones{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.maquina{
+  width:62vw;
+  height:auto;
+  max-width:760px;
+  display:block;
+  margin:10px auto 0;
+}
+
+select{
+  padding:12px;
+  font-size:16px;
+  min-width:240px;
+  margin:10px;
+}
+
+.mensaje{
+  max-width:900px;
+  margin:15px auto 10px;
+  font-size:18px;
+  line-height:1.5;
+}
+
+.p1-controles{
+  margin-top:18px;
+}
+
+/* PANTALLA 2 - INTENDENTE */
+.card-intendente{
+  min-height:260px;
+  justify-content:flex-start;
+  padding:10px;
+}
+
+.int-partido{
+  font-size:24px;
+  font-weight:800;
+  margin:5px 0 12px;
+}
+
+.int-fila{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:24px;
+  margin:6px 0 10px;
+  min-height:150px;
+}
+
+.int-foto{
+  width:130px;
+  height:130px;
+  object-fit:contain;
+}
+
+.int-datos{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.int-lista-titulo{
+  font-size:34px;
+  font-weight:800;
+  line-height:1;
+}
+
+.int-lista-numero{
+  font-size:55px;
+  font-weight:900;
+  line-height:1;
+}
+
+.int-sigla{
+  font-size:26px;
+  margin-top:6px;
+}
+
+.int-nombre{
+  font-size:22px;
+  margin-top:10px;
+}
+
+/* PANTALLA 3 - LISTAS SOLO TEXTO */
+.card-lista{
+  min-height:300px;
+  padding:22px 18px;
+  justify-content:space-between;
+}
+
+.lista-numero{
+  font-size:62px;
+  font-weight:900;
+  line-height:1;
+}
+
+.lista-partido{
+  font-size:28px;
+  font-weight:800;
+  line-height:1.1;
+  white-space:pre-line;
+}
+
+.lista-sigla{
+  font-size:28px;
+  margin-top:14px;
+}
+
+.lista-blanco{
+  font-size:28px;
+  font-weight:800;
+}
+
+/* PANTALLA 4 - JUNTA */
+.card-junta{
+  min-height:135px;
+  padding:5px;
+  justify-content:flex-start;
+}
+
+.junta-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-top:8px;
+  min-height:70px;
+}
+
+.junta-foto{
+  width:58px;
+  height:58px;
+  object-fit:cover;
+}
+
+.junta-opcion{
+  font-size:16px;
+  font-weight:bold;
+  line-height:1.1;
+  white-space:pre-line;
+}
+
+.junta-nombre{
+  font-size:14px;
+  margin-top:5px;
+}
+
+/* PANTALLA 5 */
+#p7 .bloque img{
+  width:190px;
+  height:190px;
+  object-fit:contain;
+  margin:10px auto;
+  display:block;
+}
+
+.final-partido{
+  font-size:26px;
+  font-weight:800;
+  margin:10px 0;
+}
+
+.final-lista{
+  font-size:26px;
+  font-weight:800;
+  margin:10px 0;
+}
+
+.final-opcion{
+  font-size:22px;
+  font-weight:700;
+  margin:10px 0;
+}
+
+@media (max-width: 1100px){
+  .grid-candidatos{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .resultado{
+    grid-template-columns:1fr;
+  }
+
+  .acciones{
+    flex-direction:row;
+    justify-content:center;
+  }
+}
+
+@media (max-width: 700px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .grid3,
+  .grid-candidatos{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  img.encabezado{
+    height:75px;
+  }
+
+  .maquina{
+    width:90vw;
+  }
+
+  .int-fila{
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .int-lista-titulo{font-size:30px}
+  .int-lista-numero{font-size:52px}
+  .int-sigla{font-size:24px}
+  .int-partido{font-size:24px}
+  .int-nombre{font-size:24px}
+}
+
+@media print{
+  body *{
+    visibility:hidden;
+  }
+
+  #p7,#p7 *{
+    visibility:visible;
+  }
+
+  #p7{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    background:white;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+
+<script>
+const datos = {
+  capital: {
+    nombre: "Capital",
+    encabezadoInfo: "",
+
+    intendentes: [
+      {
+        nombre: "Camilo Perez",
+        partido: "HONOR COLORADO",
+        listaTexto: "LISTA",
+        listaNumero: "2",
+        sigla: "MHC",
+        imagen: "camilo.png",
+        activo: true
+      },
+      {
+        nombre: "Otro",
+        partido: "FUERZA",
+        listaTexto: "LISTA",
+        listaNumero: "7",
+        sigla: "",
+        imagen: "fuerza.png",
+        activo: false
+      },
+      {
+        nombre: "Otro",
+        partido: "UNIDOS",
+        listaTexto: "",
+        listaNumero: "",
+        sigla: "",
+        imagen: "uni.png",
+        activo: false
+      },
+      {
+        nombre: "Blanco",
+        partido: "VOTO EN BLANCO",
+        listaTexto: "",
+        listaNumero: "",
+        sigla: "",
+        imagen: "blanco.png",
+        activo: false
+      }
+    ],
+
+    listas: [
+      {
+        id: "2c",
+        numero: "LISTA 2C",
+        partido: "HONOR COLORADO C",
+        sigla: "MHC",
+        activo: true
+      },
+      {
+        id: "2p",
+        numero: "LISTA 2P",
+        partido: "HONOR COLORADO P",
+        sigla: "MHC",
+        activo: false
+      },
+      {
+        id: "6",
+        numero: "LISTA 6",
+        partido: "COLORADO AÑETETE",
+        sigla: "MCA",
+        activo: false
+      },
+      {
+        id: "7",
+        numero: "LISTA 7",
+        partido: "FUERZA Y CAUSA\nREPUBLICANA POR\nASUNCION",
+        sigla: "MFCRA",
+        activo: false
+      },
+      {
+        id: "20",
+        numero: "LISTA 20",
+        partido: "ORDEN REPUBLICANO",
+        sigla: "MOR",
+        activo: false
+      },
+      {
+        id: "blanco",
+        numero: "",
+        partido: "VOTO EN BLANCO",
+        sigla: "",
+        activo: false
+      }
+    ],
+
+    junta: {
+      "2c": [
+        {nombre:"Miguel Sosa", opcion:"Opción\n1", imagen:"miguel.png", activo:true},
+        {nombre:"", opcion:"", imagen:"B.png", activo:false},
+        {nombre:"", opcion:"", imagen:"C.png", activo:false},
+        {nombre:"", opcion:"", imagen:"D.png", activo:false},
+        {nombre:"", opcion:"", imagen:"E.png", activo:false},
+        {nombre:"", opcion:"", imagen:"F.png", activo:false},
+        {nombre:"", opcion:"", imagen:"G.png", activo:false},
+        {nombre:"", opcion:"", imagen:"H.png", activo:false},
+        {nombre:"", opcion:"", imagen:"I.png", activo:false},
+        {nombre:"", opcion:"", imagen:"J.png", activo:false},
+        {nombre:"", opcion:"", imagen:"K.png", activo:false},
+        {nombre:"", opcion:"", imagen:"L.png", activo:false},
+        {nombre:"", opcion:"", imagen:"M.png", activo:false},
+        {nombre:"", opcion:"", imagen:"N.png", activo:false},
+        {nombre:"", opcion:"", imagen:"O.png", activo:false},
+        {nombre:"", opcion:"", imagen:"P.png", activo:false},
+        {nombre:"", opcion:"", imagen:"Q.png", activo:false},
+        {nombre:"", opcion:"", imagen:"R.png", activo:false},
+        {nombre:"", opcion:"", imagen:"S.png", activo:false},
+        {nombre:"", opcion:"", imagen:"T.png", activo:false},
+        {nombre:"", opcion:"", imagen:"U.png", activo:false},
+        {nombre:"", opcion:"", imagen:"V.png", activo:false},
+        {nombre:"", opcion:"", imagen:"W.png", activo:false},
+        {nombre:"", opcion:"", imagen:"X.png", activo:false},
+        {nombre:"", opcion:"", imagen:"Y.png", activo:false},
+        {nombre:"", opcion:"", imagen:"Z.png", activo:false}
+      ]
+    }
+  }
+};
+
+let capitalActual = "capital";
+let intendenteSeleccionado = null;
+let listaSeleccionada = null;
+let juntaSeleccionada = null;
+
+function ir(p){
+  document.querySelectorAll(".pantalla").forEach(e => e.classList.remove("activa"));
+  document.getElementById("p" + p).classList.add("activa");
+  window.scrollTo(0,0);
+}
+
+function sonido(){
+  const audio = document.getElementById("clickSound");
+  audio.currentTime = 0;
+  audio.play().catch(() => {});
+}
+
+function seleccionarEnPantalla(el){
+  const pantallaActiva = el.closest(".pantalla");
+  pantallaActiva.querySelectorAll(".card").forEach(c => c.classList.remove("seleccionado"));
+  el.classList.add("seleccionado");
+}
+
+function cargarCapitales(){
+  const select = document.getElementById("capitalSelect");
+  select.innerHTML = "";
+
+  Object.keys(datos).forEach(key => {
+    const option = document.createElement("option");
+    option.value = key;
+    option.textContent = datos[key].nombre;
+    select.appendChild(option);
+  });
+
+  capitalActual = select.value;
+}
+
+function renderEncabezadoInfo(){
+  const texto = datos[capitalActual].encabezadoInfo || "";
+  const ids = ["infoP2","infoP3","infoP6","infoP7"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = texto;
+  });
+}
+
+function renderIntendentes(){
+  const contenedor = document.getElementById("contenedorIntendentes");
+  contenedor.innerHTML = "";
+  const lista = datos[capitalActual].intendentes;
+
+  lista.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "card card-intendente" + (item.activo ? "" : " bloqueado");
+
+    div.innerHTML = `
+      <div class="int-partido">${item.partido}</div>
+
+      <div class="int-fila">
+        <img class="int-foto" src="${item.imagen}" alt="${item.nombre}">
+        <div class="int-datos">
+          <div class="int-lista-titulo">${item.listaTexto}</div>
+          <div class="int-lista-numero">${item.listaNumero}</div>
+          <div class="int-sigla">${item.sigla}</div>
+        </div>
+      </div>
+
+      <div class="int-nombre">${item.nombre}</div>
+    `;
+
+    if(item.activo){
+      div.onclick = () => {
+        seleccionarEnPantalla(div);
+        elegirInt(item);
+      };
+    }
+
+    contenedor.appendChild(div);
+  });
+}
+
+function renderListas(){
+  const contenedor = document.getElementById("contenedorListas");
+  contenedor.innerHTML = "";
+  const listas = datos[capitalActual].listas;
+
+  listas.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "card card-lista" + (item.activo ? "" : " bloqueado");
+
+    if(item.id === "blanco"){
+      div.innerHTML = `
+        <div class="lista-numero">&nbsp;</div>
+        <div class="lista-blanco">${item.partido}</div>
+        <div class="lista-sigla">&nbsp;</div>
+      `;
+    } else {
+      div.innerHTML = `
+        <div class="lista-numero">${item.numero}</div>
+        <div class="lista-partido">${item.partido}</div>
+        <div class="lista-sigla">${item.sigla}</div>
+      `;
+    }
+
+    if(item.activo){
+      div.onclick = () => {
+        seleccionarEnPantalla(div);
+        elegirLista(item);
+      };
+    }
+
+    contenedor.appendChild(div);
+  });
+}
+
+function renderJunta(){
+  const contenedor = document.getElementById("contenedorJunta");
+  contenedor.innerHTML = "";
+
+  const candidatos = datos[capitalActual].junta[listaSeleccionada.id] || [];
+
+  candidatos.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "card card-junta" + (item.activo ? "" : " bloqueado");
+
+    if(item.activo){
+      div.innerHTML = `
+        <div class="junta-top">
+          <img class="junta-foto" src="${item.imagen}" alt="${item.nombre}">
+          <div class="junta-opcion">${item.opcion}</div>
+        </div>
+        <div class="junta-nombre">${item.nombre}</div>
+      `;
+    } else {
+      div.innerHTML = `
+        <img class="junta-foto" src="${item.imagen}" alt="">
+      `;
+    }
+
+    if(item.activo){
+      div.onclick = () => {
+        seleccionarEnPantalla(div);
+        elegirCandidato(item);
+      };
+    }
+
+    contenedor.appendChild(div);
+  });
+}
+
+function elegirInt(item){
+  sonido();
+  intendenteSeleccionado = item;
+  setTimeout(() => {
+    renderListas();
+    ir(3);
+  }, 150);
+}
+
+function elegirLista(item){
+  sonido();
+  listaSeleccionada = item;
+  setTimeout(() => {
+    renderJunta();
+    ir(6);
+  }, 150);
+}
+
+function elegirCandidato(item){
+  sonido();
+  if(!confirm("¿Confirmar selección?")) return;
+
+  juntaSeleccionada = item;
+
+  document.getElementById("finalIntPartido").innerText = intendenteSeleccionado.partido;
+  document.getElementById("finalIntLista").innerText = `${intendenteSeleccionado.listaTexto} ${intendenteSeleccionado.listaNumero}`.trim();
+  document.getElementById("finalIntNombre").innerText = intendenteSeleccionado.nombre;
+  document.getElementById("finalIntImg").src = intendenteSeleccionado.imagen;
+
+  document.getElementById("finalJunPartido").innerText = listaSeleccionada.partido;
+  document.getElementById("finalJunLista").innerText = listaSeleccionada.numero;
+  document.getElementById("finalJunNombre").innerText = juntaSeleccionada.nombre;
+  document.getElementById("finalJunOpcion").innerText = juntaSeleccionada.opcion.replace("\n", " ");
+  document.getElementById("finalJunImg").src = juntaSeleccionada.imagen;
+
+  ir(7);
+}
+
+function imprimir(){
+  window.print();
+}
+
+function reiniciar(){
+  location.reload();
+}
+
+function iniciar(){
+  capitalActual = document.getElementById("capitalSelect").value;
+  renderEncabezadoInfo();
+  renderIntendentes();
+  ir(2);
+}
+
+function volverA(pantalla){
+  ir(pantalla);
+}
+
+function pantallaCompleta(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+}
+
+window.addEventListener("load", () => {
+  cargarCapitales();
+
+  history.pushState(null, null, location.href);
+  window.onpopstate = function(){
+    history.go(1);
+  };
+});
+
+document.body.addEventListener("click", pantallaCompleta, { once:true });
+</script>
+
+<!-- PANTALLA 1 -->
+<div id="p1" class="pantalla activa">
+  <img src="maquina.png" class="maquina" alt="Máquina">
+  <p class="mensaje">Simulador del uso de la máquina de votación.</p>
+
+  <div class="p1-controles">
+    <div>
+      <select id="capitalSelect"></select>
+    </div>
+
+    <div class="botonera">
+      <button class="btn-inicio" onclick="iniciar()">Comenzar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PANTALLA 2 -->
+<div id="p2" class="pantalla">
+  <div class="info-eleccion" id="infoP2"></div>
+  <img src="intendente.png" class="encabezado" alt="Intendente">
+  <div class="subinfo">Seleccione candidato a Intendente</div>
+
+  <div id="contenedorIntendentes" class="grid"></div>
+
+  <div class="botonera">
+    <button class="btn-volver" onclick="volverA(1)">Volver</button>
+  </div>
+</div>
+
+<!-- PANTALLA 3 -->
+<div id="p3" class="pantalla">
+  <div class="info-eleccion" id="infoP3"></div>
+  <img src="lista.png" class="encabezado" alt="Lista">
+  <div class="subinfo">Seleccione una lista</div>
+
+  <div id="contenedorListas" class="grid3"></div>
+
+  <div class="botonera">
+    <button class="btn-volver" onclick="volverA(2)">Volver</button>
+  </div>
+</div>
+
+<!-- PANTALLA 4 -->
+<div id="p6" class="pantalla">
+  <div class="info-eleccion" id="infoP6"></div>
+  <img src="junta.png" class="encabezado" alt="Junta">
+  <div class="subinfo">Seleccione candidato a Junta</div>
+
+  <div id="contenedorJunta" class="grid-candidatos"></div>
+
+  <div class="botonera">
+    <button class="btn-volver" onclick="volverA(3)">Volver</button>
+  </div>
+</div>
+
+<!-- PANTALLA 5 -->
+<div id="p7" class="pantalla">
+  <div class="info-eleccion" id="infoP7"></div>
+  <img src="seleccionadas.png" class="encabezado" alt="Seleccionadas">
+
+  <div class="resultado">
+    <div class="bloque">
+      <h3>INTENDENTE MUNICIPAL</h3>
+      <div class="final-partido" id="finalIntPartido"></div>
+      <div class="final-lista" id="finalIntLista"></div>
+      <img id="finalIntImg" src="" alt="Intendente seleccionado">
+      <h4 id="finalIntNombre"></h4>
+    </div>
+
+    <div class="bloque">
+      <h3>JUNTA MUNICIPAL</h3>
+      <div class="final-partido" id="finalJunPartido"></div>
+      <div class="final-lista" id="finalJunLista"></div>
+      <img id="finalJunImg" src="" alt="Junta seleccionada">
+      <div class="final-opcion" id="finalJunOpcion"></div>
+      <h4 id="finalJunNombre"></h4>
+    </div>
+
+    <div class="acciones">
+      <button class="btn-reiniciar" onclick="reiniciar()">Reiniciar</button>
+      <button class="btn-imprimir" onclick="imprimir()">Imprimir</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
