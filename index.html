@@ -2,824 +2,784 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=1280, initial-scale=1.0">
 <title>Simulador TSJE</title>
 
 <style>
-*{box-sizing:border-box}
+*{box-sizing:border-box;}
 
 body{
-  font-family:Arial, Helvetica, sans-serif;
-  margin:0;
-  text-align:center;
-  background:#eaeaea;
-  color:#222;
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:#eaeaea;
+text-align:center;
+color:#222;
+overflow-x:auto;
 }
 
 .pantalla{
-  display:none;
-  padding:10px 20px 20px;
-  min-height:100vh;
+display:none;
+padding:10px 6px 20px;
+min-height:100vh;
+min-width:1200px;
 }
 
 .activa{
-  display:block;
-}
-
-.subinfo{
-  margin:8px 0 14px;
-  font-size:15px;
-  color:#444;
+display:block;
 }
 
 .info-eleccion{
-  display:none;
+display:none;
 }
 
-img.encabezado{
-  width:100%;
-  height:105px;
-  object-fit:contain;
-  margin-bottom:10px;
-  background:#fff;
+.encabezado{
+width:100%;
+height:95px;
+object-fit:contain;
+background:#fff;
+margin-bottom:8px;
+}
+
+.subinfo{
+font-size:15px;
+margin:8px 0 12px;
+color:#444;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:8px;
 }
 
 .grid3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:0;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:0;
 }
 
 .grid-candidatos{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:3px;
+display:grid;
+grid-template-columns:repeat(6,1fr);
+gap:4px;
 }
 
 .card{
-  background:#fff;
-  border:1px solid #bfbfbf;
-  padding:12px;
-  cursor:pointer;
-  min-height:180px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  transition:0.2s ease;
+background:#fff;
+border:1px solid #c9c9c9;
+cursor:pointer;
+padding:10px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+transition:0.2s;
 }
 
 .card:hover{
-  background:#fafafa;
+background:#fafafa;
 }
 
 .seleccionado{
-  border:4px solid green !important;
-  background:#dfffe0 !important;
+border:4px solid green !important;
+background:#dfffe0 !important;
 }
 
 .bloqueado{
-  opacity:0.35;
-  pointer-events:none;
-}
-
-.botonera{
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  margin-top:20px;
-  flex-wrap:wrap;
+opacity:.35;
+pointer-events:none;
 }
 
 button{
-  border:none;
-  padding:14px 24px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-  border-radius:6px;
+border:none;
+padding:14px 24px;
+font-size:16px;
+font-weight:bold;
+border-radius:0;
+cursor:pointer;
+font-family:Arial, Helvetica, sans-serif;
 }
 
-.btn-volver{
-  background:#607d8b;
-  color:white;
-}
-
-.btn-reiniciar{
-  background:orange;
-  color:white;
-}
-
-.btn-imprimir{
-  background:green;
-  color:white;
+.botonera{
+display:flex;
+justify-content:center;
+gap:12px;
+margin-top:20px;
+flex-wrap:wrap;
 }
 
 .btn-inicio{
-  background:#1565c0;
-  color:white;
+background:#1565c0;
+color:#fff;
+padding:14px 34px;
+border-radius:8px;
 }
 
-.resultado{
-  display:grid;
-  grid-template-columns:1fr 1fr 220px;
-  gap:20px;
-  align-items:start;
-}
-
-.bloque{
-  background:#fff;
-  padding:20px;
-  border:2px solid #ccc;
-  min-height:420px;
-}
-
-.acciones{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
+.btn-volver{
+background:#607d8b;
+color:#fff;
+border-radius:6px;
 }
 
 .maquina{
-  width:62vw;
-  height:auto;
-  max-width:760px;
-  display:block;
-  margin:10px auto 0;
-}
-
-select{
-  padding:12px;
-  font-size:16px;
-  min-width:240px;
-  margin:10px;
+width:60vw;
+max-width:700px;
+height:auto;
+display:block;
+margin:0 auto;
 }
 
 .mensaje{
-  max-width:900px;
-  margin:15px auto 10px;
-  font-size:18px;
-  line-height:1.5;
+font-size:18px;
+margin:15px 0 6px;
+font-weight:600;
 }
 
-.p1-controles{
-  margin-top:18px;
-}
-
-/* PANTALLA 2 - INTENDENTE */
+/* pantalla intendente */
 .card-intendente{
-  min-height:260px;
-  justify-content:flex-start;
-  padding:10px;
+min-height:255px;
+padding:10px;
 }
 
 .int-partido{
-  font-size:24px;
-  font-weight:800;
-  margin:5px 0 12px;
+font-size:24px;
+font-weight:800;
+margin-bottom:10px;
 }
 
 .int-fila{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:24px;
-  margin:6px 0 10px;
-  min-height:150px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:20px;
 }
 
 .int-foto{
-  width:130px;
-  height:130px;
-  object-fit:contain;
-}
-
-.int-datos{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+width:130px;
+height:130px;
+object-fit:contain;
 }
 
 .int-lista-titulo{
-  font-size:34px;
-  font-weight:800;
-  line-height:1;
+font-size:34px;
+font-weight:800;
+line-height:1;
 }
 
 .int-lista-numero{
-  font-size:55px;
-  font-weight:900;
-  line-height:1;
+font-size:56px;
+font-weight:900;
+line-height:1;
 }
 
 .int-sigla{
-  font-size:26px;
-  margin-top:6px;
+font-size:24px;
+margin-top:5px;
 }
 
 .int-nombre{
-  font-size:22px;
-  margin-top:10px;
+font-size:22px;
+margin-top:10px;
 }
 
-/* PANTALLA 3 - LISTAS SOLO TEXTO */
+/* pantalla listas */
 .card-lista{
-  min-height:300px;
-  padding:22px 18px;
-  justify-content:space-between;
+min-height:280px;
+padding:18px;
 }
 
 .lista-numero{
-  font-size:62px;
-  font-weight:900;
-  line-height:1;
+font-size:58px;
+font-weight:900;
+line-height:1;
 }
 
 .lista-partido{
-  font-size:28px;
-  font-weight:800;
-  line-height:1.1;
-  white-space:pre-line;
+font-size:24px;
+font-weight:800;
+line-height:1.1;
+white-space:pre-line;
+margin-top:18px;
 }
 
 .lista-sigla{
-  font-size:28px;
-  margin-top:14px;
+font-size:26px;
+margin-top:18px;
 }
 
 .lista-blanco{
-  font-size:28px;
-  font-weight:800;
+font-size:28px;
+font-weight:800;
 }
 
-/* PANTALLA 4 - JUNTA */
+/* pantalla junta */
 .card-junta{
-  min-height:135px;
-  padding:5px;
-  justify-content:flex-start;
+min-height:180px;
+padding:6px;
 }
 
 .junta-top{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  margin-top:8px;
-  min-height:70px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+min-height:105px;
 }
 
 .junta-foto{
-  width:58px;
-  height:58px;
-  object-fit:cover;
+width:95px;
+height:95px;
+object-fit:contain;
 }
 
 .junta-opcion{
-  font-size:16px;
-  font-weight:bold;
-  line-height:1.1;
-  white-space:pre-line;
+font-size:16px;
+font-weight:bold;
+line-height:1.1;
+white-space:pre-line;
 }
 
 .junta-nombre{
-  font-size:14px;
-  margin-top:5px;
+font-size:14px;
+margin-top:6px;
 }
 
-/* PANTALLA 5 */
-#p7 .bloque img{
-  width:190px;
-  height:190px;
-  object-fit:contain;
-  margin:10px auto;
-  display:block;
+/* pantalla final */
+.barra-final{
+background:#555;
+color:#fff;
+font-size:24px;
+font-weight:800;
+padding:8px 0;
+margin:12px 0 0;
+}
+
+.resultado{
+display:grid;
+grid-template-columns:1fr 1fr 170px;
+gap:0;
+align-items:stretch;
+border:1px solid #c2c2c2;
+background:#dcdcdc;
+}
+
+.bloque{
+background:#efefef;
+border:1px solid #c2c2c2;
+padding:12px 10px 18px;
+min-height:570px;
+display:flex;
+flex-direction:column;
+justify-content:flex-start;
+align-items:center;
+}
+
+.titulo-final{
+width:100%;
+font-size:28px;
+font-weight:900;
+margin:2px 0 16px;
+padding-bottom:8px;
+border-bottom:2px solid #8f8f8f;
 }
 
 .final-partido{
-  font-size:26px;
-  font-weight:800;
-  margin:10px 0;
+font-size:28px;
+font-weight:900;
+margin:8px 0 20px;
 }
 
 .final-lista{
-  font-size:26px;
-  font-weight:800;
-  margin:10px 0;
+font-size:30px;
+font-weight:900;
+margin:6px 0 18px;
+}
+
+#p7 .bloque img{
+width:210px;
+height:210px;
+object-fit:contain;
+display:block;
+margin:8px auto 18px;
 }
 
 .final-opcion{
-  font-size:22px;
-  font-weight:700;
-  margin:10px 0;
+font-size:22px;
+margin:6px 0 6px;
 }
 
-@media (max-width: 1100px){
-  .grid-candidatos{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .resultado{
-    grid-template-columns:1fr;
-  }
-
-  .acciones{
-    flex-direction:row;
-    justify-content:center;
-  }
+.final-nombre{
+font-size:28px;
+font-weight:800;
+margin:4px 0 0;
 }
 
-@media (max-width: 700px){
-  .grid{
-    grid-template-columns:1fr;
-  }
+.final-nombre-junta{
+font-size:24px;
+font-weight:800;
+margin:4px 0 0;
+}
 
-  .grid3,
-  .grid-candidatos{
-    grid-template-columns:repeat(2,1fr);
-  }
+.btn-modificar{
+margin-top:auto;
+background:#5d5d5d;
+color:#fff;
+font-size:22px;
+font-weight:800;
+padding:12px 34px;
+border-radius:6px;
+}
 
-  img.encabezado{
-    height:75px;
-  }
+.acciones{
+display:flex;
+flex-direction:column;
+gap:10px;
+height:100%;
+background:#dcdcdc;
+}
 
-  .maquina{
-    width:90vw;
-  }
+.btn-reiniciar{
+background:#ff7a00;
+color:#fff;
+width:100%;
+min-height:170px;
+font-size:18px;
+font-weight:800;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+line-height:1.05;
+padding:18px 10px;
+}
 
-  .int-fila{
-    flex-direction:column;
-    gap:12px;
-  }
+.btn-imprimir{
+background:#00a800;
+color:#fff;
+width:100%;
+min-height:390px;
+font-size:18px;
+font-weight:800;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+line-height:1.05;
+padding:18px 10px;
+}
 
-  .int-lista-titulo{font-size:30px}
-  .int-lista-numero{font-size:52px}
-  .int-sigla{font-size:24px}
-  .int-partido{font-size:24px}
-  .int-nombre{font-size:24px}
+.icono-btn{
+font-size:64px;
+line-height:1;
+margin-bottom:14px;
+font-weight:normal;
+}
+
+/* mismo orden en celular */
+@media(max-width:1100px){
+.grid-candidatos{
+grid-template-columns:repeat(6,1fr);
+}
+.resultado{
+grid-template-columns:1fr 1fr 170px;
+}
+.acciones{
+flex-direction:column;
+}
+}
+
+@media(max-width:700px){
+.pantalla{
+min-width:1200px;
+}
+.grid{
+grid-template-columns:repeat(2,1fr);
+}
+.grid3{
+grid-template-columns:repeat(3,1fr);
+}
+.grid-candidatos{
+grid-template-columns:repeat(6,1fr);
+}
+.int-fila{
+flex-direction:row;
+}
+.maquina{
+width:60vw;
+}
 }
 
 @media print{
-  body *{
-    visibility:hidden;
-  }
-
-  #p7,#p7 *{
-    visibility:visible;
-  }
-
-  #p7{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    background:white;
-  }
+body *{visibility:hidden;}
+#p7,#p7 *{visibility:visible;}
+#p7{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+background:#fff;
+}
 }
 </style>
 </head>
 
 <body>
 
-<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
 <script>
-const datos = {
-  capital: {
-    nombre: "Capital",
-    encabezadoInfo: "",
+const datos={
+capital:{
+nombre:"Capital",
+encabezadoInfo:"",
+intendentes:[
+{
+nombre:"Camilo Perez",
+partido:"HONOR COLORADO",
+listaTexto:"LISTA",
+listaNumero:"2",
+sigla:"MHC",
+imagen:"camilo.png",
+activo:true
+},
+{
+nombre:"Otro",
+partido:"FUERZA",
+listaTexto:"LISTA",
+listaNumero:"7",
+sigla:"",
+imagen:"fuerza.png",
+activo:false
+},
+{
+nombre:"Otro",
+partido:"UNIDOS",
+listaTexto:"",
+listaNumero:"",
+sigla:"",
+imagen:"uni.png",
+activo:false
+},
+{
+nombre:"Blanco",
+partido:"VOTO EN BLANCO",
+listaTexto:"",
+listaNumero:"",
+sigla:"",
+imagen:"blanco.png",
+activo:false
+}
+],
 
-    intendentes: [
-      {
-        nombre: "Camilo Perez",
-        partido: "HONOR COLORADO",
-        listaTexto: "LISTA",
-        listaNumero: "2",
-        sigla: "MHC",
-        imagen: "camilo.png",
-        activo: true
-      },
-      {
-        nombre: "Otro",
-        partido: "FUERZA",
-        listaTexto: "LISTA",
-        listaNumero: "7",
-        sigla: "",
-        imagen: "fuerza.png",
-        activo: false
-      },
-      {
-        nombre: "Otro",
-        partido: "UNIDOS",
-        listaTexto: "",
-        listaNumero: "",
-        sigla: "",
-        imagen: "uni.png",
-        activo: false
-      },
-      {
-        nombre: "Blanco",
-        partido: "VOTO EN BLANCO",
-        listaTexto: "",
-        listaNumero: "",
-        sigla: "",
-        imagen: "blanco.png",
-        activo: false
-      }
-    ],
+listas:[
+{id:"2c",numero:"LISTA 2C",partido:"HONOR COLORADO C",sigla:"MHC",activo:true},
+{id:"2p",numero:"LISTA 2P",partido:"HONOR COLORADO P",sigla:"MHC",activo:false},
+{id:"6",numero:"LISTA 6",partido:"COLORADO AÑETETE",sigla:"MCA",activo:false},
+{id:"7",numero:"LISTA 7",partido:"FUERZA Y CAUSA\nREPUBLICANA POR\nASUNCION",sigla:"MFCRA",activo:false},
+{id:"20",numero:"LISTA 20",partido:"ORDEN REPUBLICANO",sigla:"MOR",activo:false},
+{id:"blanco",numero:"",partido:"VOTO EN BLANCO",sigla:"",activo:false}
+],
 
-    listas: [
-      {
-        id: "2c",
-        numero: "LISTA 2C",
-        partido: "HONOR COLORADO C",
-        sigla: "MHC",
-        activo: true
-      },
-      {
-        id: "2p",
-        numero: "LISTA 2P",
-        partido: "HONOR COLORADO P",
-        sigla: "MHC",
-        activo: false
-      },
-      {
-        id: "6",
-        numero: "LISTA 6",
-        partido: "COLORADO AÑETETE",
-        sigla: "MCA",
-        activo: false
-      },
-      {
-        id: "7",
-        numero: "LISTA 7",
-        partido: "FUERZA Y CAUSA\nREPUBLICANA POR\nASUNCION",
-        sigla: "MFCRA",
-        activo: false
-      },
-      {
-        id: "20",
-        numero: "LISTA 20",
-        partido: "ORDEN REPUBLICANO",
-        sigla: "MOR",
-        activo: false
-      },
-      {
-        id: "blanco",
-        numero: "",
-        partido: "VOTO EN BLANCO",
-        sigla: "",
-        activo: false
-      }
-    ],
-
-    junta: {
-      "2c": [
-        {nombre:"Miguel Sosa", opcion:"Opción\n1", imagen:"miguel.png", activo:true},
-        {nombre:"", opcion:"", imagen:"B.png", activo:false},
-        {nombre:"", opcion:"", imagen:"C.png", activo:false},
-        {nombre:"", opcion:"", imagen:"D.png", activo:false},
-        {nombre:"", opcion:"", imagen:"E.png", activo:false},
-        {nombre:"", opcion:"", imagen:"F.png", activo:false},
-        {nombre:"", opcion:"", imagen:"G.png", activo:false},
-        {nombre:"", opcion:"", imagen:"H.png", activo:false},
-        {nombre:"", opcion:"", imagen:"I.png", activo:false},
-        {nombre:"", opcion:"", imagen:"J.png", activo:false},
-        {nombre:"", opcion:"", imagen:"K.png", activo:false},
-        {nombre:"", opcion:"", imagen:"L.png", activo:false},
-        {nombre:"", opcion:"", imagen:"M.png", activo:false},
-        {nombre:"", opcion:"", imagen:"N.png", activo:false},
-        {nombre:"", opcion:"", imagen:"O.png", activo:false},
-        {nombre:"", opcion:"", imagen:"P.png", activo:false},
-        {nombre:"", opcion:"", imagen:"Q.png", activo:false},
-        {nombre:"", opcion:"", imagen:"R.png", activo:false},
-        {nombre:"", opcion:"", imagen:"S.png", activo:false},
-        {nombre:"", opcion:"", imagen:"T.png", activo:false},
-        {nombre:"", opcion:"", imagen:"U.png", activo:false},
-        {nombre:"", opcion:"", imagen:"V.png", activo:false},
-        {nombre:"", opcion:"", imagen:"W.png", activo:false},
-        {nombre:"", opcion:"", imagen:"X.png", activo:false},
-        {nombre:"", opcion:"", imagen:"Y.png", activo:false},
-        {nombre:"", opcion:"", imagen:"Z.png", activo:false}
-      ]
-    }
-  }
+junta:{
+"2c":[
+{nombre:"Miguel Sosa",opcion:"Opción\n1",imagen:"miguel.png",activo:true},
+{nombre:"",opcion:"",imagen:"B.png",activo:false},
+{nombre:"",opcion:"",imagen:"C.png",activo:false},
+{nombre:"",opcion:"",imagen:"D.png",activo:false},
+{nombre:"",opcion:"",imagen:"E.png",activo:false},
+{nombre:"",opcion:"",imagen:"F.png",activo:false},
+{nombre:"",opcion:"",imagen:"G.png",activo:false},
+{nombre:"",opcion:"",imagen:"H.png",activo:false},
+{nombre:"",opcion:"",imagen:"I.png",activo:false},
+{nombre:"",opcion:"",imagen:"J.png",activo:false},
+{nombre:"",opcion:"",imagen:"K.png",activo:false},
+{nombre:"",opcion:"",imagen:"L.png",activo:false},
+{nombre:"",opcion:"",imagen:"M.png",activo:false},
+{nombre:"",opcion:"",imagen:"N.png",activo:false},
+{nombre:"",opcion:"",imagen:"O.png",activo:false},
+{nombre:"",opcion:"",imagen:"P.png",activo:false},
+{nombre:"",opcion:"",imagen:"Q.png",activo:false},
+{nombre:"",opcion:"",imagen:"R.png",activo:false},
+{nombre:"",opcion:"",imagen:"S.png",activo:false},
+{nombre:"",opcion:"",imagen:"T.png",activo:false},
+{nombre:"",opcion:"",imagen:"U.png",activo:false},
+{nombre:"",opcion:"",imagen:"V.png",activo:false},
+{nombre:"",opcion:"",imagen:"W.png",activo:false},
+{nombre:"",opcion:"",imagen:"X.png",activo:false},
+]
+}
+}
 };
 
-let capitalActual = "capital";
-let intendenteSeleccionado = null;
-let listaSeleccionada = null;
-let juntaSeleccionada = null;
+let capitalActual="capital";
+let intendenteSeleccionado=null;
+let listaSeleccionada=null;
+let juntaSeleccionada=null;
 
 function ir(p){
-  document.querySelectorAll(".pantalla").forEach(e => e.classList.remove("activa"));
-  document.getElementById("p" + p).classList.add("activa");
-  window.scrollTo(0,0);
+document.querySelectorAll(".pantalla").forEach(x=>x.classList.remove("activa"));
+document.getElementById("p"+p).classList.add("activa");
+window.scrollTo(0,0);
 }
 
 function sonido(){
-  const audio = document.getElementById("clickSound");
-  audio.currentTime = 0;
-  audio.play().catch(() => {});
+let a=document.getElementById("clickSound");
+a.currentTime=0;
+a.play().catch(()=>{});
 }
 
 function seleccionarEnPantalla(el){
-  const pantallaActiva = el.closest(".pantalla");
-  pantallaActiva.querySelectorAll(".card").forEach(c => c.classList.remove("seleccionado"));
-  el.classList.add("seleccionado");
+let padre=el.closest(".pantalla");
+padre.querySelectorAll(".card").forEach(c=>c.classList.remove("seleccionado"));
+el.classList.add("seleccionado");
 }
 
 function cargarCapitales(){
-  const select = document.getElementById("capitalSelect");
-  select.innerHTML = "";
-
-  Object.keys(datos).forEach(key => {
-    const option = document.createElement("option");
-    option.value = key;
-    option.textContent = datos[key].nombre;
-    select.appendChild(option);
-  });
-
-  capitalActual = select.value;
-}
-
-function renderEncabezadoInfo(){
-  const texto = datos[capitalActual].encabezadoInfo || "";
-  const ids = ["infoP2","infoP3","infoP6","infoP7"];
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if(el) el.textContent = texto;
-  });
+capitalActual="capital";
 }
 
 function renderIntendentes(){
-  const contenedor = document.getElementById("contenedorIntendentes");
-  contenedor.innerHTML = "";
-  const lista = datos[capitalActual].intendentes;
+let c=document.getElementById("contenedorIntendentes");
+c.innerHTML="";
 
-  lista.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "card card-intendente" + (item.activo ? "" : " bloqueado");
+datos[capitalActual].intendentes.forEach(item=>{
+let div=document.createElement("div");
+div.className="card card-intendente"+(item.activo?"":" bloqueado");
 
-    div.innerHTML = `
-      <div class="int-partido">${item.partido}</div>
+div.innerHTML=`
+<div class="int-partido">${item.partido}</div>
 
-      <div class="int-fila">
-        <img class="int-foto" src="${item.imagen}" alt="${item.nombre}">
-        <div class="int-datos">
-          <div class="int-lista-titulo">${item.listaTexto}</div>
-          <div class="int-lista-numero">${item.listaNumero}</div>
-          <div class="int-sigla">${item.sigla}</div>
-        </div>
-      </div>
+<div class="int-fila">
+<img class="int-foto" src="${item.imagen}" alt="${item.nombre}">
+<div>
+<div class="int-lista-titulo">${item.listaTexto}</div>
+<div class="int-lista-numero">${item.listaNumero}</div>
+<div class="int-sigla">${item.sigla}</div>
+</div>
+</div>
 
-      <div class="int-nombre">${item.nombre}</div>
-    `;
+<div class="int-nombre">${item.nombre}</div>
+`;
 
-    if(item.activo){
-      div.onclick = () => {
-        seleccionarEnPantalla(div);
-        elegirInt(item);
-      };
-    }
+if(item.activo){
+div.onclick=()=>{
+seleccionarEnPantalla(div);
+sonido();
+intendenteSeleccionado=item;
+setTimeout(()=>{
+renderListas();
+ir(3);
+},120);
+};
+}
 
-    contenedor.appendChild(div);
-  });
+c.appendChild(div);
+});
 }
 
 function renderListas(){
-  const contenedor = document.getElementById("contenedorListas");
-  contenedor.innerHTML = "";
-  const listas = datos[capitalActual].listas;
+let c=document.getElementById("contenedorListas");
+c.innerHTML="";
 
-  listas.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "card card-lista" + (item.activo ? "" : " bloqueado");
+datos[capitalActual].listas.forEach(item=>{
+let div=document.createElement("div");
+div.className="card card-lista"+(item.activo?"":" bloqueado");
 
-    if(item.id === "blanco"){
-      div.innerHTML = `
-        <div class="lista-numero">&nbsp;</div>
-        <div class="lista-blanco">${item.partido}</div>
-        <div class="lista-sigla">&nbsp;</div>
-      `;
-    } else {
-      div.innerHTML = `
-        <div class="lista-numero">${item.numero}</div>
-        <div class="lista-partido">${item.partido}</div>
-        <div class="lista-sigla">${item.sigla}</div>
-      `;
-    }
+if(item.id==="blanco"){
+div.innerHTML=`
+<div class="lista-numero">&nbsp;</div>
+<div class="lista-blanco">${item.partido}</div>
+<div class="lista-sigla">&nbsp;</div>
+`;
+}else{
+div.innerHTML=`
+<div class="lista-numero">${item.numero}</div>
+<div class="lista-partido">${item.partido}</div>
+<div class="lista-sigla">${item.sigla}</div>
+`;
+}
 
-    if(item.activo){
-      div.onclick = () => {
-        seleccionarEnPantalla(div);
-        elegirLista(item);
-      };
-    }
+if(item.activo){
+div.onclick=()=>{
+seleccionarEnPantalla(div);
+sonido();
+listaSeleccionada=item;
+setTimeout(()=>{
+renderJunta();
+ir(6);
+},120);
+};
+}
 
-    contenedor.appendChild(div);
-  });
+c.appendChild(div);
+});
 }
 
 function renderJunta(){
-  const contenedor = document.getElementById("contenedorJunta");
-  contenedor.innerHTML = "";
+let c=document.getElementById("contenedorJunta");
+c.innerHTML="";
 
-  const candidatos = datos[capitalActual].junta[listaSeleccionada.id] || [];
+let arr=datos[capitalActual].junta[listaSeleccionada.id]||[];
 
-  candidatos.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "card card-junta" + (item.activo ? "" : " bloqueado");
+arr.forEach(item=>{
+let div=document.createElement("div");
+div.className="card card-junta"+(item.activo?"":" bloqueado");
 
-    if(item.activo){
-      div.innerHTML = `
-        <div class="junta-top">
-          <img class="junta-foto" src="${item.imagen}" alt="${item.nombre}">
-          <div class="junta-opcion">${item.opcion}</div>
-        </div>
-        <div class="junta-nombre">${item.nombre}</div>
-      `;
-    } else {
-      div.innerHTML = `
-        <img class="junta-foto" src="${item.imagen}" alt="">
-      `;
-    }
-
-    if(item.activo){
-      div.onclick = () => {
-        seleccionarEnPantalla(div);
-        elegirCandidato(item);
-      };
-    }
-
-    contenedor.appendChild(div);
-  });
+if(item.activo){
+div.innerHTML=`
+<div class="junta-top">
+<img class="junta-foto" src="${item.imagen}" alt="${item.nombre}">
+<div class="junta-opcion">${item.opcion}</div>
+</div>
+<div class="junta-nombre">${item.nombre}</div>
+`;
+}else{
+div.innerHTML=`<img class="junta-foto" src="${item.imagen}" alt="">`;
 }
 
-function elegirInt(item){
-  sonido();
-  intendenteSeleccionado = item;
-  setTimeout(() => {
-    renderListas();
-    ir(3);
-  }, 150);
+if(item.activo){
+div.onclick=()=>{
+seleccionarEnPantalla(div);
+sonido();
+
+juntaSeleccionada=item;
+
+document.getElementById("finalIntPartido").innerText=intendenteSeleccionado.partido;
+document.getElementById("finalIntLista").innerText=(intendenteSeleccionado.listaTexto+" "+intendenteSeleccionado.listaNumero).trim();
+document.getElementById("finalIntNombre").innerText=intendenteSeleccionado.nombre;
+document.getElementById("finalIntImg").src=intendenteSeleccionado.imagen;
+
+document.getElementById("finalJunPartido").innerText=listaSeleccionada.partido;
+document.getElementById("finalJunLista").innerText=listaSeleccionada.numero;
+document.getElementById("finalJunNombre").innerText=juntaSeleccionada.nombre;
+document.getElementById("finalJunOpcion").innerText=juntaSeleccionada.opcion.replace("\n"," ");
+document.getElementById("finalJunImg").src=juntaSeleccionada.imagen;
+
+ir(7);
+};
 }
 
-function elegirLista(item){
-  sonido();
-  listaSeleccionada = item;
-  setTimeout(() => {
-    renderJunta();
-    ir(6);
-  }, 150);
-}
-
-function elegirCandidato(item){
-  sonido();
-  if(!confirm("¿Confirmar selección?")) return;
-
-  juntaSeleccionada = item;
-
-  document.getElementById("finalIntPartido").innerText = intendenteSeleccionado.partido;
-  document.getElementById("finalIntLista").innerText = `${intendenteSeleccionado.listaTexto} ${intendenteSeleccionado.listaNumero}`.trim();
-  document.getElementById("finalIntNombre").innerText = intendenteSeleccionado.nombre;
-  document.getElementById("finalIntImg").src = intendenteSeleccionado.imagen;
-
-  document.getElementById("finalJunPartido").innerText = listaSeleccionada.partido;
-  document.getElementById("finalJunLista").innerText = listaSeleccionada.numero;
-  document.getElementById("finalJunNombre").innerText = juntaSeleccionada.nombre;
-  document.getElementById("finalJunOpcion").innerText = juntaSeleccionada.opcion.replace("\n", " ");
-  document.getElementById("finalJunImg").src = juntaSeleccionada.imagen;
-
-  ir(7);
-}
-
-function imprimir(){
-  window.print();
-}
-
-function reiniciar(){
-  location.reload();
+c.appendChild(div);
+});
 }
 
 function iniciar(){
-  capitalActual = document.getElementById("capitalSelect").value;
-  renderEncabezadoInfo();
-  renderIntendentes();
-  ir(2);
+capitalActual="capital";
+renderIntendentes();
+ir(2);
 }
 
-function volverA(pantalla){
-  ir(pantalla);
+function volverA(n){
+ir(n);
 }
 
-function pantallaCompleta(){
-  if(!document.fullscreenElement){
-    document.documentElement.requestFullscreen().catch(() => {});
-  }
+function imprimir(){
+window.print();
 }
 
-window.addEventListener("load", () => {
-  cargarCapitales();
+function reiniciar(){
+location.reload();
+}
 
-  history.pushState(null, null, location.href);
-  window.onpopstate = function(){
-    history.go(1);
-  };
-});
+window.onload=()=>{
+cargarCapitales();
+history.pushState(null,null,location.href);
+window.onpopstate=()=>history.go(1);
+};
 
-document.body.addEventListener("click", pantallaCompleta, { once:true });
+document.body.onclick=()=>{
+if(!document.fullscreenElement){
+document.documentElement.requestFullscreen().catch(()=>{});
+}
+};
 </script>
 
-<!-- PANTALLA 1 -->
+<!-- P1 -->
 <div id="p1" class="pantalla activa">
-  <img src="maquina.png" class="maquina" alt="Máquina">
-  <p class="mensaje">Simulador del uso de la máquina de votación.</p>
+<img src="maquina.png" class="maquina" alt="Máquina">
+<p class="mensaje">Simulador del uso de la máquina de votación.</p>
 
-  <div class="p1-controles">
-    <div>
-      <select id="capitalSelect"></select>
-    </div>
-
-    <div class="botonera">
-      <button class="btn-inicio" onclick="iniciar()">Comenzar</button>
-    </div>
-  </div>
+<div class="botonera">
+<button class="btn-inicio" onclick="iniciar()">Comenzar</button>
+</div>
 </div>
 
-<!-- PANTALLA 2 -->
+<!-- P2 -->
 <div id="p2" class="pantalla">
-  <div class="info-eleccion" id="infoP2"></div>
-  <img src="intendente.png" class="encabezado" alt="Intendente">
-  <div class="subinfo">Seleccione candidato a Intendente</div>
+<img src="intendente.png" class="encabezado" alt="Intendente">
+<div class="subinfo">Seleccione candidato a Intendente</div>
 
-  <div id="contenedorIntendentes" class="grid"></div>
+<div id="contenedorIntendentes" class="grid"></div>
 
-  <div class="botonera">
-    <button class="btn-volver" onclick="volverA(1)">Volver</button>
-  </div>
+<div class="botonera">
+<button class="btn-volver" onclick="volverA(1)">Volver</button>
+</div>
 </div>
 
-<!-- PANTALLA 3 -->
+<!-- P3 -->
 <div id="p3" class="pantalla">
-  <div class="info-eleccion" id="infoP3"></div>
-  <img src="lista.png" class="encabezado" alt="Lista">
-  <div class="subinfo">Seleccione una lista</div>
+<img src="lista.png" class="encabezado" alt="Lista">
+<div class="subinfo">Seleccione una lista</div>
 
-  <div id="contenedorListas" class="grid3"></div>
+<div id="contenedorListas" class="grid3"></div>
 
-  <div class="botonera">
-    <button class="btn-volver" onclick="volverA(2)">Volver</button>
-  </div>
+<div class="botonera">
+<button class="btn-volver" onclick="volverA(2)">Volver</button>
+</div>
 </div>
 
-<!-- PANTALLA 4 -->
+<!-- P4 -->
 <div id="p6" class="pantalla">
-  <div class="info-eleccion" id="infoP6"></div>
-  <img src="junta.png" class="encabezado" alt="Junta">
-  <div class="subinfo">Seleccione candidato a Junta</div>
+<img src="junta.png" class="encabezado" alt="Junta">
+<div class="subinfo">Seleccione candidato a Junta</div>
 
-  <div id="contenedorJunta" class="grid-candidatos"></div>
+<div id="contenedorJunta" class="grid-candidatos"></div>
 
-  <div class="botonera">
-    <button class="btn-volver" onclick="volverA(3)">Volver</button>
-  </div>
+<div class="botonera">
+<button class="btn-volver" onclick="volverA(3)">Volver</button>
+</div>
 </div>
 
-<!-- PANTALLA 5 -->
+<!-- P5 -->
 <div id="p7" class="pantalla">
-  <div class="info-eleccion" id="infoP7"></div>
-  <img src="seleccionadas.png" class="encabezado" alt="Seleccionadas">
+<div class="barra-final">Opciones seleccionadas</div>
 
-  <div class="resultado">
-    <div class="bloque">
-      <h3>INTENDENTE MUNICIPAL</h3>
-      <div class="final-partido" id="finalIntPartido"></div>
-      <div class="final-lista" id="finalIntLista"></div>
-      <img id="finalIntImg" src="" alt="Intendente seleccionado">
-      <h4 id="finalIntNombre"></h4>
-    </div>
+<div class="resultado">
 
-    <div class="bloque">
-      <h3>JUNTA MUNICIPAL</h3>
-      <div class="final-partido" id="finalJunPartido"></div>
-      <div class="final-lista" id="finalJunLista"></div>
-      <img id="finalJunImg" src="" alt="Junta seleccionada">
-      <div class="final-opcion" id="finalJunOpcion"></div>
-      <h4 id="finalJunNombre"></h4>
-    </div>
+<div class="bloque">
+<h3 class="titulo-final">INTENDENTE MUNICIPAL</h3>
+<div class="final-partido" id="finalIntPartido"></div>
+<div class="final-lista" id="finalIntLista"></div>
+<img id="finalIntImg" alt="Intendente seleccionado">
+<div class="final-nombre" id="finalIntNombre"></div>
+<button class="btn-modificar" onclick="volverA(2)">Modificar</button>
+</div>
 
-    <div class="acciones">
-      <button class="btn-reiniciar" onclick="reiniciar()">Reiniciar</button>
-      <button class="btn-imprimir" onclick="imprimir()">Imprimir</button>
-    </div>
-  </div>
+<div class="bloque">
+<h3 class="titulo-final">JUNTA MUNICIPAL</h3>
+<div class="final-partido" id="finalJunPartido"></div>
+<div class="final-lista" id="finalJunLista"></div>
+<img id="finalJunImg" alt="Junta seleccionada">
+<div class="final-opcion" id="finalJunOpcion"></div>
+<div class="final-nombre-junta" id="finalJunNombre"></div>
+<button class="btn-modificar" onclick="volverA(6)">Modificar</button>
+</div>
+
+<div class="acciones">
+<button class="btn-reiniciar" onclick="reiniciar()">
+<span class="icono-btn">↻</span>
+<span>Reiniciar<br>Selección</span>
+</button>
+
+<button class="btn-imprimir" onclick="imprimir()">
+<span class="icono-btn">🖨</span>
+<span>Imprimir<br>Selección</span>
+</button>
+</div>
+
+</div>
 </div>
 
 </body>
