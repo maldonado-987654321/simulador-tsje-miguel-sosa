@@ -395,10 +395,8 @@
 </head>
 <body>
 
-<audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
-
 <script>
-const datos = {
+var datos = {
   capital: {
     nombre: "Capital",
     intendentes: [
@@ -480,150 +478,149 @@ const datos = {
   }
 };
 
-let capitalActual = "capital";
-let intendenteSeleccionado = null;
-let listaSeleccionada = null;
-let juntaSeleccionada = null;
+var capitalActual = "capital";
+var intendenteSeleccionado = null;
+var listaSeleccionada = null;
+var juntaSeleccionada = null;
 
 function ir(p) {
-  document.querySelectorAll(".pantalla").forEach(x => x.classList.remove("activa"));
+  var pantallas = document.querySelectorAll(".pantalla");
+  for (var i = 0; i < pantallas.length; i++) {
+    pantallas[i].classList.remove("activa");
+  }
   document.getElementById("p" + p).classList.add("activa");
   window.scrollTo(0, 0);
 }
 
-function sonido() {
-  const a = document.getElementById("clickSound");
-  a.currentTime = 0;
-  a.play().catch(() => {});
-}
-
 function seleccionarEnPantalla(el) {
-  const padre = el.closest(".pantalla");
-  padre.querySelectorAll(".card").forEach(c => c.classList.remove("seleccionado"));
+  var padre = el.closest(".pantalla");
+  var cards = padre.querySelectorAll(".card");
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].classList.remove("seleccionado");
+  }
   el.classList.add("seleccionado");
 }
 
 function renderIntendentes() {
-  const c = document.getElementById("contenedorIntendentes");
+  var c = document.getElementById("contenedorIntendentes");
   c.innerHTML = "";
+  var lista = datos[capitalActual].intendentes;
 
-  datos[capitalActual].intendentes.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "card card-intendente" + (item.activo ? "" : " bloqueado");
+  for (var i = 0; i < lista.length; i++) {
+    (function(item) {
+      var div = document.createElement("div");
+      div.className = "card card-intendente" + (item.activo ? "" : " bloqueado");
+      div.innerHTML =
+        '<div class="int-partido">' + item.partido + '</div>' +
+        '<div class="int-fila">' +
+          '<img class="int-foto" src="' + item.imagen + '" alt="' + item.nombre + '">' +
+          '<div>' +
+            '<div class="int-lista-titulo">' + item.listaTexto + '</div>' +
+            '<div class="int-lista-numero">' + item.listaNumero + '</div>' +
+            '<div class="int-sigla">' + item.sigla + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="int-nombre">' + item.nombre + '</div>';
 
-    div.innerHTML = `
-      <div class="int-partido">${item.partido}</div>
-      <div class="int-fila">
-        <img class="int-foto" src="${item.imagen}" alt="${item.nombre}">
-        <div>
-          <div class="int-lista-titulo">${item.listaTexto}</div>
-          <div class="int-lista-numero">${item.listaNumero}</div>
-          <div class="int-sigla">${item.sigla}</div>
-        </div>
-      </div>
-      <div class="int-nombre">${item.nombre}</div>
-    `;
+      if (item.activo) {
+        div.onclick = function() {
+          seleccionarEnPantalla(div);
+          intendenteSeleccionado = item;
+          setTimeout(function() {
+            renderListas();
+            ir(3);
+          }, 120);
+        };
+      }
 
-    if (item.activo) {
-      div.onclick = () => {
-        seleccionarEnPantalla(div);
-        sonido();
-        intendenteSeleccionado = item;
-        setTimeout(() => {
-          renderListas();
-          ir(3);
-        }, 120);
-      };
-    }
-
-    c.appendChild(div);
-  });
+      c.appendChild(div);
+    })(lista[i]);
+  }
 }
 
 function renderListas() {
-  const c = document.getElementById("contenedorListas");
+  var c = document.getElementById("contenedorListas");
   c.innerHTML = "";
+  var listas = datos[capitalActual].listas;
 
-  datos[capitalActual].listas.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "card card-lista" + (item.activo ? "" : " bloqueado");
+  for (var i = 0; i < listas.length; i++) {
+    (function(item) {
+      var div = document.createElement("div");
+      div.className = "card card-lista" + (item.activo ? "" : " bloqueado");
 
-    if (item.id === "blanco") {
-      div.innerHTML = `
-        <div class="lista-numero">&nbsp;</div>
-        <div class="lista-blanco">${item.partido}</div>
-        <div class="lista-sigla">&nbsp;</div>
-      `;
-    } else {
-      div.innerHTML = `
-        <div class="lista-numero">${item.numero}</div>
-        <div class="lista-partido">${item.partido}</div>
-        <div class="lista-sigla">${item.sigla}</div>
-      `;
-    }
+      if (item.id === "blanco") {
+        div.innerHTML =
+          '<div class="lista-numero">&nbsp;</div>' +
+          '<div class="lista-blanco">' + item.partido + '</div>' +
+          '<div class="lista-sigla">&nbsp;</div>';
+      } else {
+        div.innerHTML =
+          '<div class="lista-numero">' + item.numero + '</div>' +
+          '<div class="lista-partido">' + item.partido + '</div>' +
+          '<div class="lista-sigla">' + item.sigla + '</div>';
+      }
 
-    if (item.activo) {
-      div.onclick = () => {
-        seleccionarEnPantalla(div);
-        sonido();
-        listaSeleccionada = item;
-        setTimeout(() => {
-          renderJunta();
-          ir(6);
-        }, 120);
-      };
-    }
+      if (item.activo) {
+        div.onclick = function() {
+          seleccionarEnPantalla(div);
+          listaSeleccionada = item;
+          setTimeout(function() {
+            renderJunta();
+            ir(6);
+          }, 120);
+        };
+      }
 
-    c.appendChild(div);
-  });
+      c.appendChild(div);
+    })(listas[i]);
+  }
 }
 
 function renderJunta() {
-  const c = document.getElementById("contenedorJunta");
+  var c = document.getElementById("contenedorJunta");
   c.innerHTML = "";
 
-  const arr = datos[capitalActual].junta[listaSeleccionada.id] || [];
+  var arr = datos[capitalActual].junta[listaSeleccionada.id] || [];
 
-  arr.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "card card-junta" + (item.activo ? "" : " bloqueado");
+  for (var i = 0; i < arr.length; i++) {
+    (function(item) {
+      var div = document.createElement("div");
+      div.className = "card card-junta" + (item.activo ? "" : " bloqueado");
 
-    if (item.activo) {
-      div.innerHTML = `
-        <div class="junta-top">
-          <img class="junta-foto" src="${item.imagen}" alt="${item.nombre}">
-          <div class="junta-opcion">${item.opcion}</div>
-        </div>
-        <div class="junta-nombre">${item.nombre}</div>
-      `;
-    } else {
-      div.innerHTML = `<img class="junta-foto" src="${item.imagen}" alt="">`;
-    }
+      if (item.activo) {
+        div.innerHTML =
+          '<div class="junta-top">' +
+            '<img class="junta-foto" src="' + item.imagen + '" alt="' + item.nombre + '">' +
+            '<div class="junta-opcion">' + item.opcion + '</div>' +
+          '</div>' +
+          '<div class="junta-nombre">' + item.nombre + '</div>';
+      } else {
+        div.innerHTML = '<img class="junta-foto" src="' + item.imagen + '" alt="">';
+      }
 
-    if (item.activo) {
-      div.onclick = () => {
-        seleccionarEnPantalla(div);
-        sonido();
+      if (item.activo) {
+        div.onclick = function() {
+          seleccionarEnPantalla(div);
+          juntaSeleccionada = item;
 
-        juntaSeleccionada = item;
+          document.getElementById("finalIntPartido").innerText = intendenteSeleccionado.partido;
+          document.getElementById("finalIntLista").innerText = (intendenteSeleccionado.listaTexto + " " + intendenteSeleccionado.listaNumero).trim();
+          document.getElementById("finalIntNombre").innerText = intendenteSeleccionado.nombre;
+          document.getElementById("finalIntImg").src = intendenteSeleccionado.imagen;
 
-        document.getElementById("finalIntPartido").innerText = intendenteSeleccionado.partido;
-        document.getElementById("finalIntLista").innerText = (intendenteSeleccionado.listaTexto + " " + intendenteSeleccionado.listaNumero).trim();
-        document.getElementById("finalIntNombre").innerText = intendenteSeleccionado.nombre;
-        document.getElementById("finalIntImg").src = intendenteSeleccionado.imagen;
+          document.getElementById("finalJunPartido").innerText = listaSeleccionada.partido;
+          document.getElementById("finalJunLista").innerText = listaSeleccionada.numero;
+          document.getElementById("finalJunNombre").innerText = juntaSeleccionada.nombre;
+          document.getElementById("finalJunOpcion").innerText = juntaSeleccionada.opcion.replace("\n", " ");
+          document.getElementById("finalJunImg").src = juntaSeleccionada.imagen;
 
-        document.getElementById("finalJunPartido").innerText = listaSeleccionada.partido;
-        document.getElementById("finalJunLista").innerText = listaSeleccionada.numero;
-        document.getElementById("finalJunNombre").innerText = juntaSeleccionada.nombre;
-        document.getElementById("finalJunOpcion").innerText = juntaSeleccionada.opcion.replace("\n", " ");
-        document.getElementById("finalJunImg").src = juntaSeleccionada.imagen;
+          ir(7);
+        };
+      }
 
-        ir(7);
-      };
-    }
-
-    c.appendChild(div);
-  });
+      c.appendChild(div);
+    })(arr[i]);
+  }
 }
 
 function iniciar() {
@@ -644,15 +641,8 @@ function reiniciar() {
   location.reload();
 }
 
-window.onload = () => {
-  history.pushState(null, null, location.href);
-  window.onpopstate = () => history.go(1);
-};
-
-document.body.onclick = () => {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  }
+window.onload = function() {
+  ir(1);
 };
 </script>
 
